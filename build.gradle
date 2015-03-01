@@ -1,3 +1,17 @@
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+version =  '0.1.0'
+jar {
+    baseName = project.name
+}
+
+repositories {
+    mavenCentral()
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -7,20 +21,7 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'spring-boot'
-
-jar {
-    baseName = 'gs-spring-boot'
-    version =  '0.1.0'
-}
-
-repositories {
-    mavenCentral()
-}
-
+// Project dependencies
 dependencies {
     // tag::jetty[]
     compile("org.springframework.boot:spring-boot-starter-web") {
@@ -32,8 +33,27 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-actuator")
     // end::actuator[]
     testCompile("junit:junit")
+    
+    // for production, add actuator modules
+    compile("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
+}
+
+/*
+ * Pack all dependencies
+ */
+task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    
+    baseName = project.name + '-all'
+
+    manifest {
+        attributes 'Implementation-Version': version,
+                   'Main-Class': 'hello.SampleController'
+    }
+    with jar
 }
