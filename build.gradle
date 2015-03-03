@@ -32,7 +32,6 @@ dependencies {
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     // end::actuator[]
-    testCompile("junit:junit")
     
     // for production, add actuator modules
     compile("org.springframework.boot:spring-boot-starter-actuator")
@@ -41,6 +40,13 @@ dependencies {
     compile("org.slf4j:slf4j-api:1.7.10")
     compile("ch.qos.logback:logback-classic:1.1.2")
     compile("org.slf4j:jcl-over-slf4j:1.7.10")
+    
+    //
+    // Tests
+    //
+    testCompile("junit:junit")
+    testCompile("org.springframework.boot:spring-boot-starter-test:1.2.2.RELEASE")
+    testCompile("org.springframework:spring-test:2.5")
 }
 
 task wrapper(type: Wrapper) {
