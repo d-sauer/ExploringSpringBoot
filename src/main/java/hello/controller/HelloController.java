@@ -14,7 +14,7 @@ public class HelloController {
     
     @RequestMapping("/")
     public String index() {
-        log.trace("Accesing INDEX");
+        log.trace("Accessing INDEX");
         
         Date date = new Date();
         return "Hello on " + date;

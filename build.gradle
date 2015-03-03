@@ -4,6 +4,20 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 
 version =  '0.1.0'
+
+jar {
+  baseName = 'exploring-spring-boot'
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+}
+
+eclipse {
+  jdt {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+  }
+}
+  
 jar {
     baseName = project.name
 }
@@ -28,25 +42,33 @@ dependencies {
         exclude module: "spring-boot-starter-tomcat"
     }
     compile("org.springframework.boot:spring-boot-starter-jetty")
-    // end::jetty[]
-    // tag::actuator[]
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    // end::actuator[]
-    
+
+	compile('org.springframework.boot:spring-boot-autoconfigure')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.hibernate:hibernate-validator')
+	compile("javax.persistence:persistence-api:1.0")
+
     // for production, add actuator modules
     compile("org.springframework.boot:spring-boot-starter-actuator")
+
+    compile('com.nimbusds:nimbus-jose-jwt:3.9')
+    compile("com.fasterxml.jackson:jackson-parent:2.5")
     
     // Loging
     compile("org.slf4j:slf4j-api:1.7.10")
     compile("ch.qos.logback:logback-classic:1.1.2")
     compile("org.slf4j:jcl-over-slf4j:1.7.10")
     
-    //
-    // Tests
-    //
+    /*
+     * Tests
+    */
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test:1.2.2.RELEASE")
     testCompile("org.springframework:spring-test:2.5")
+    
+    
+    runtime('com.h2database:h2')
 }
 
 task wrapper(type: Wrapper) {
@@ -57,6 +79,7 @@ task wrapper(type: Wrapper) {
  * Pack all dependencies
  */
 task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {
+    description 'Create UberJAR with all dependencies.'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
     
@@ -64,7 +87,7 @@ task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {
 
     manifest {
         attributes 'Implementation-Version': version,
-                   'Main-Class': 'hello.SampleController'
+                   'Main-Class': 'hello.Application'
     }
     with jar
 }
